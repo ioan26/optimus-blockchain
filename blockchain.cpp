@@ -5,54 +5,65 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <iomanip>
+#include <sstream>
 
+using namespace std;
 
-void sha256_hash_string (unsigned char hash[SHA256_DIGEST_LENGTH], char outputBuffer[65])
+string sha256(const string str)
 {
-    int i = 0;
-
-    for(i = 0; i < SHA256_DIGEST_LENGTH; i++)
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, str.c_str(), str.size());
+    SHA256_Final(hash, &sha256);
+    stringstream ss;
+    for(int i = 0; i < SHA256_DIGEST_LENGTH; i++)
     {
-        sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+        ss << hex << setw(2) << setfill('0') << (int)hash[i];
     }
-
-    outputBuffer[64] = 0;
+    return ss.str();
 }
 
-long get_timestamp(void){
+string get_timestamp(void){
   using namespace std::chrono;
 
-  system_clock::time_point today = system_clock::now();
-  auto duration = today.time_since_epoch();
-  long millis = duration_cast<milliseconds>(duration).count();
-  return &millis;
+
+  const auto p1 = std::chrono::system_clock::now();
+  const unsigned long int nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(p1.time_since_epoch()).count();
+
+  string nanosecond_str = to_string(nanoseconds);
+    
+
+  return nanosecond_str;
 }
 
 
 class Blockchain {
 public:
   struct transaction_t{
-    std::string sender;
-    std::string reciver;
+    string sender;
+    string reciver;
     int amount;
   };
   struct block_t{
     int index;
-    long timestamp;
-    std::vector <transaction_t> transactions{};
+    string timestamp;
+    vector <transaction_t> transactions{};
     int proof;
-    char *previous_hash;
+    string previous_hash;
   };
-  std::vector <block_t> chain{};
-  std::vector <transaction_t> current_transactions{};
+  vector <block_t> chain{};
+  vector <transaction_t> current_transactions{};
 
   //Constructor
   Blockchain(void){
-    new_block(100, 1);
+    string previous_hash = "1";
+    new_block(100, previous_hash);
     //TODO: Nodes register
   }
 
-  block_t new_block(int proof, char *previous_hash){
+  block_t new_block(int proof, string previous_hash){
     block_t block;
 
     block.index = chain.size();
@@ -71,7 +82,7 @@ public:
     return last_block;
   }
 
-  int new_transaction(std::string sender, std::string reciver, int amount){
+  int new_transaction(string sender, string reciver, int amount){
     transaction_t new_transaction;
     new_transaction.sender = sender;
     new_transaction.reciver = reciver;
@@ -81,11 +92,11 @@ public:
     return last_block().index + 1;
   }
 
-  unsigned char hash(block_t block){
-    static unsigned char hash[65];
-    sha256_hash_string(get_timestamp(), hash);
+  string generate_hash(block_t block){
+    string new_hash;
+    new_hash = sha256(get_timestamp());
 
-    return hash;
+    return new_hash;
   }
 
   int proof_of_work(int last_proof){
@@ -96,22 +107,17 @@ public:
     return proof;
   }
   bool valid_proof(int last_proof, int proof){
-    static unsigned char guess_hash[65];
-    static unsigned char guess[SHA256_DIGEST_LENGTH];
-
-    std::string concatenate = std::to_string(last_proof) + std::to_string(proof);
-    copy(concatenate.begin(), concatenate.end(), guess);
-    guess[concatenate.length()] = 0;
-    sha256_hash_string(guess, guess_hash);
+    string concatenate = to_string(last_proof) + to_string(proof);
+    string guess_hash = sha256(concatenate);
 
     for (size_t i = 0; i < 4; i++) {
       /* code */
-      size_t size = sizeof(guess_hash);
-      if(!guess_hash[size - 1] == "0"){
+      char *last_element = &(guess_hash.at(guess_hash.length() - 1));
+      if(strcmp( last_element, "0") != 0){
         return 0;
       }
       else{
-        guess_hash[size - 1] = 0;
+        guess_hash.pop_back();
       }
     }
 
@@ -120,19 +126,19 @@ public:
 
   void register_node(char address){}
 
-  bool valid_chain(char chain){
+  int valid_chain(vector<block_t> chain){
     block_t block;
     block_t last_block = chain.at(0);
     int current_index = 1;
-
+    string hash = generate_hash(last_block);
     while (current_index < chain.size()) {
       block = chain.at(current_index);
 
-      if (block.previous_hash != hash(last_block)){
+      if (block.previous_hash != hash){
         return 0;
       }
 
-      if (!valid_proof(last_block.proof), block.proof){
+      if (!valid_proof(last_block.proof, block.proof)){
         return 0;
       }
       last_block = block;
@@ -142,20 +148,12 @@ public:
     return 1;
   }
 
-  bool resolve_conflicts(void){}
+  // bool resolve_conflicts(void){}
 };
 
 
-
 int main(int argc, char const *argv[]) {
-  /* code */
-
-  // static unsigned char buffer[65];
-  // sha256_hash_string(ctime(get_timestamp()), buffer);
-  // printf("%s\n", buffer);
   Blockchain B;
   // printf("Last proof: %i\n", B.last_block().proof);
-
-
   return 0;
 }
