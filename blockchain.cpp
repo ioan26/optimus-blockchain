@@ -10,19 +10,27 @@
 
 using namespace std;
 
-string sha256(const string str)
+void sha256(const string str, string *output_hash)
 {
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256_CTX sha256;
-    SHA256_Init(&sha256);
-    SHA256_Update(&sha256, str.c_str(), str.size());
-    SHA256_Final(hash, &sha256);
-    stringstream ss;
-    for(int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-    {
-        ss << hex << setw(2) << setfill('0') << (int)hash[i];
+  int ret;
+  unsigned char hash[SHA256_DIGEST_LENGTH];
+  SHA256_CTX sha256;
+  ret = SHA256_Init(&sha256);
+  if (ret == 1){
+    ret = SHA256_Update(&sha256, str.c_str(), str.size());
+    if (ret == 1){
+      ret = SHA256_Final(hash, &sha256);
+      ret = 0;
+      if (ret == 1){
+        stringstream ss;
+        for(int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+        {
+            ss << hex << setw(2) << setfill('0') << (int)hash[i];
+        }
+        *output_hash = ss.str();
+      }
     }
-    return ss.str();
+  }
 }
 
 string get_timestamp(void){
@@ -55,12 +63,13 @@ public:
   };
   vector <block_t> chain{};
   vector <transaction_t> current_transactions{};
+  vector <string> nodes{};
 
   //Constructor
   Blockchain(void){
     string previous_hash = "1";
     new_block(100, previous_hash);
-    //TODO: Nodes register
+    
   }
 
   block_t new_block(int proof, string previous_hash){
@@ -94,8 +103,8 @@ public:
 
   string generate_hash(block_t block){
     string new_hash;
-    new_hash = sha256(get_timestamp());
-
+    sha256(get_timestamp(), &new_hash);
+    // TODO: Handle empty hash
     return new_hash;
   }
 
@@ -108,10 +117,10 @@ public:
   }
   bool valid_proof(int last_proof, int proof){
     string concatenate = to_string(last_proof) + to_string(proof);
-    string guess_hash = sha256(concatenate);
-
+    string guess_hash;
+    sha256(concatenate, &guess_hash);
+    // TODO: Handle empty hash
     for (size_t i = 0; i < 4; i++) {
-      /* code */
       char *last_element = &(guess_hash.at(guess_hash.length() - 1));
       if(strcmp( last_element, "0") != 0){
         return 0;
