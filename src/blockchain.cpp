@@ -133,8 +133,6 @@ public:
     return 1;
   }
 
-  void register_node(char address){}
-
   int valid_chain(vector<block_t> chain){
     block_t block;
     block_t last_block = chain.at(0);
@@ -157,12 +155,29 @@ public:
     return 1;
   }
 
-  // bool resolve_conflicts(void){}
+  // void register_node(string address){
+  //   printf("%s\n", address.c_str());
+  //   nodes.push_back(address);
+  // }
+
+  // int resolve_conflicts(void){
+  //   vector <block_t> new_chain{};
+  //   size_t max_lenght = chain.size();
+  //   size_t number_of_nodes = nodes.size();
+  //   while (number_of_nodes)
+  //   {
+  //     // HTTP Request chain version of the target node
+  //     stringstream address;
+  //     address << "http://" << nodes.end() << "/chain";
+  //     curlpp::options::Url(addres.str()));
+  //   }
+    
+    
+  // }
 };
 
 
 int main(int argc, char const *argv[]) {
   Blockchain B;
-  // printf("Last proof: %i\n", B.last_block().proof);
   return 0;
 }

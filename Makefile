@@ -8,8 +8,8 @@ libs = -lcrypto
 TARGET = blockchain
 
 .PHONY: clean
-$(TARGET): $(TARGET).cpp
-	$(CC) $(CFLAGS) $(INCLUDE) $(LIBS) -o $(TARGET) $(TARGET).cpp $(libs)
+$(TARGET): src/$(TARGET).cpp
+	$(CC) $(CFLAGS) $(INCLUDE) $(LIBS) -o $(TARGET) src/$(TARGET).cpp $(libs)
 
 clean:
 	rm $(TARGET)
