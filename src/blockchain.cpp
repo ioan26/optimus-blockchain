@@ -63,7 +63,7 @@ public:
   };
   vector <block_t> chain{};
   vector <transaction_t> current_transactions{};
-  vector <string> nodes{};
+  vector <Node> nodes{};
 
   //Constructor
   Blockchain(void){
@@ -83,6 +83,7 @@ public:
 
     current_transactions.clear();
     chain.push_back(block);
+
     return block;
   }
 
@@ -174,6 +175,61 @@ public:
     
     
   // }
+};
+
+class Node: public Blockchain
+{
+public:
+  int votes;
+  int forged_blocks;
+  int residue_value;
+  float share_rate;
+  float trust;
+  enum role_t{
+    WITNESS,
+    DELEGATE,
+    BLOCK_VALIDATOR
+  };
+  role_t node_role = WITNESS;
+  Node(){
+    //Define role
+}
+  void change_role(role_t new_role){
+    node_role = new_role;
+  }
+
+  int calculate_share_rate(){
+    int ret;
+
+    if (nodes.size() != 0){
+      share_rate = 1 - (votes / nodes.size());
+      ret = 0;  
+    }
+    else{
+      ret = 1;
+    }
+
+    return ret;
+  }
+
+  int calculate_trust(){
+    int ret;
+    
+    if (residue_value != 0){
+      trust = share_rate * (forged_blocks / residue_value);
+      ret = 0;
+    }
+    else{
+      ret = 1;
+    }
+
+    return ret;
+  }
+
+  int send_vote(){}
+
+  int generate_keys(){}
+
 };
 
 
