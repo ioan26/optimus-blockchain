@@ -1,94 +1,34 @@
-#include "openssl/sha.h"
 #include <iostream>
 #include <cstdio>
-#include <chrono>
 #include <vector>
 #include <string>
 #include <cstring>
-#include <iomanip>
-#include <sstream>
+#include "../includes/blockchain.h"
 
 using namespace std;
 
-void sha256(const string str, string *output_hash)
-{
-  int ret;
-  unsigned char hash[SHA256_DIGEST_LENGTH];
-  SHA256_CTX sha256;
-  ret = SHA256_Init(&sha256);
-  if (ret == 1){
-    ret = SHA256_Update(&sha256, str.c_str(), str.size());
-    if (ret == 1){
-      ret = SHA256_Final(hash, &sha256);
-      ret = 0;
-      if (ret == 1){
-        stringstream ss;
-        for(int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-        {
-            ss << hex << setw(2) << setfill('0') << (int)hash[i];
-        }
-        *output_hash = ss.str();
-      }
-    }
-  }
-}
-
-string get_timestamp(void){
-  using namespace std::chrono;
-
-
-  const auto p1 = std::chrono::system_clock::now();
-  const unsigned long int nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(p1.time_since_epoch()).count();
-
-  string nanosecond_str = to_string(nanoseconds);
-    
-
-  return nanosecond_str;
-}
-
-
 class Blockchain {
 public:
-  struct transaction_t{
-    string sender;
-    string reciver;
-    int amount;
-  };
-  struct block_t{
-    int index;
-    string timestamp;
-    vector <transaction_t> transactions{};
-    int proof;
-    string previous_hash;
-  };
-  vector <block_t> chain{};
-  vector <transaction_t> current_transactions{};
-  vector <Node> nodes{};
+
+  vector <Block> chain{};
+  
 
   //Constructor
   Blockchain(void){
-    string previous_hash = "1";
-    new_block(100, previous_hash);
-    
+    transaction_t transaction;
+    transaction.sender = "0";
+    transaction.sender = "0";
+    transaction.value = 0;
+    Block legacy_block = Block(transaction, "1", 0);
+    add_new_block(legacy_block); 
   }
 
-  block_t new_block(int proof, string previous_hash){
-    block_t block;
-
-    block.index = chain.size();
-    block.timestamp = get_timestamp();
-    block.transactions = current_transactions;
-    block.proof = proof;
-    block.previous_hash = previous_hash; //TODO: or hash from last block of the chain in case is not given
-
-    current_transactions.clear();
+  void add_new_block(Block block){
     chain.push_back(block);
-
-    return block;
   }
 
-  block_t last_block(void){
-    block_t & last_block = chain.back();
+  Block get_last_block(void){
+    Block & last_block = chain.back();
     return last_block;
   }
 
@@ -177,60 +117,7 @@ public:
   // }
 };
 
-class Node: public Blockchain
-{
-public:
-  int votes;
-  int forged_blocks;
-  int residue_value;
-  float share_rate;
-  float trust;
-  enum role_t{
-    WITNESS,
-    DELEGATE,
-    BLOCK_VALIDATOR
-  };
-  role_t node_role = WITNESS;
-  Node(){
-    //Define role
-}
-  void change_role(role_t new_role){
-    node_role = new_role;
-  }
 
-  int calculate_share_rate(){
-    int ret;
-
-    if (nodes.size() != 0){
-      share_rate = 1 - (votes / nodes.size());
-      ret = 0;  
-    }
-    else{
-      ret = 1;
-    }
-
-    return ret;
-  }
-
-  int calculate_trust(){
-    int ret;
-    
-    if (residue_value != 0){
-      trust = share_rate * (forged_blocks / residue_value);
-      ret = 0;
-    }
-    else{
-      ret = 1;
-    }
-
-    return ret;
-  }
-
-  int send_vote(){}
-
-  int generate_keys(){}
-
-};
 
 
 int main(int argc, char const *argv[]) {
