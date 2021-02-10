@@ -5,6 +5,12 @@
 
 using namespace std;
 
+struct transaction_t{
+    string sender;
+    string reciver;
+    int value;
+  };
+
 class Block
 {
 private:
@@ -17,8 +23,8 @@ public:
     string hash;
     transaction_t transaction;
 
-    Block(transaction_t transaction, string previous_hash, size_t block_index);
-    string generate_hash(void){};
+    Block(transaction_t transaction, string previous_hash, int block_index);
+    string generate_hash(void);
     // ~Block();
 };
 

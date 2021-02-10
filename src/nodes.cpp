@@ -39,9 +39,8 @@ int Node::calculate_trust(void){
 }
 
 int Node::_forge_new_block(transaction_t transaction){
-    Block last_block = get_last_block();
-    Block new_block = Block(transaction, last_block.hash, last_block.index + 1);
-    add_new_block(new_block);
+    
+    add_new_block(transaction);
 }
 
 

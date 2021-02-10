@@ -22,7 +22,7 @@ find_package(gRPC CONFIG REQUIRED)
 include_directories(includes)
 
 # puts all .cpp files inside src to the SOURCES variable
-file(GLOB SOURCES src/blockchain.cpp)
+file(GLOB SOURCES src/*)
 
 # compiles the files defined by SOURCES to generante the executable defined by EXEC
 add_executable(${EXEC} ${SOURCES})

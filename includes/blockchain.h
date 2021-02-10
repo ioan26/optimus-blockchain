@@ -1,23 +1,20 @@
 #ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
-
+#include <vector>
 #include "../includes/block.h"
-#include "../includes/nodes.h"
+
+using std::vector;
 
 class Blockchain
 {
-private:
-    /* data */
 public:
-    vector <Block> chain{};
-    vector<Node> nodes_register{}; //node ids
+    vector<Block> chain{};
 
-    Blockchain(/* args */);
+    Blockchain(void);
 
-    Block get_last_block(void){};
-    void add_new_block(Block block){};
+    Block get_last_block(void);
+    void add_new_block(transaction_t transaction);
 
-    ~Blockchain();
 };
 
 
