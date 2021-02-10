@@ -1,19 +1,22 @@
 #include "../includes/block.h"
-#include "../src/utils.cpp"
+#include "utils.cpp"
+#include "../includes/nodes.h"
 
 
 Block::Block(transaction_t transaction, string previous_hash, size_t block_index){
-    string hash;
     _timestamp = get_timestamp();
-    get_hash(_timestamp, &hash);
-    _index = block_index;
+    hash = generate_hash();
+    index = block_index;
     transaction = transaction;
     previous_hash = previous_hash; //TODO: or hash from last block of the chain in case is not given
 }
 
-string Block::get_hash(void){
-    return hash;
-}
+string generate_hash(void){
+    string new_hash;
+    sha256(get_timestamp(), &new_hash);
+    // TODO: Handle empty hash
+    return new_hash;
+  }
 
 // Block::~Block()
 // {

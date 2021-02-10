@@ -4,6 +4,7 @@
 #include <string>
 #include <cstring>
 #include "../includes/blockchain.h"
+#include "utils.cpp"
 
 using namespace std;
 
@@ -36,17 +37,10 @@ public:
     transaction_t new_transaction;
     new_transaction.sender = sender;
     new_transaction.reciver = reciver;
-    new_transaction.amount = amount;
-    current_transactions.push_back(new_transaction);
+    new_transaction.value = amount;
+    // current_transactions.push_back(new_transaction);
 
-    return last_block().index + 1;
-  }
-
-  string generate_hash(block_t block){
-    string new_hash;
-    sha256(get_timestamp(), &new_hash);
-    // TODO: Handle empty hash
-    return new_hash;
+    return get_last_block().index + 1;
   }
 
   int proof_of_work(int last_proof){
@@ -74,9 +68,9 @@ public:
     return 1;
   }
 
-  int valid_chain(vector<block_t> chain){
-    block_t block;
-    block_t last_block = chain.at(0);
+  int valid_chain(vector<Block> chain){
+    Block block;
+    Block last_block = chain.at(0);
     int current_index = 1;
     string hash = generate_hash(last_block);
     while (current_index < chain.size()) {
@@ -95,26 +89,6 @@ public:
 
     return 1;
   }
-
-  // void register_node(string address){
-  //   printf("%s\n", address.c_str());
-  //   nodes.push_back(address);
-  // }
-
-  // int resolve_conflicts(void){
-  //   vector <block_t> new_chain{};
-  //   size_t max_lenght = chain.size();
-  //   size_t number_of_nodes = nodes.size();
-  //   while (number_of_nodes)
-  //   {
-  //     // HTTP Request chain version of the target node
-  //     stringstream address;
-  //     address << "http://" << nodes.end() << "/chain";
-  //     curlpp::options::Url(addres.str()));
-  //   }
-    
-    
-  // }
 };
 
 

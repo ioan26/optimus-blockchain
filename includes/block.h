@@ -18,7 +18,7 @@ public:
     transaction_t transaction;
 
     Block(transaction_t transaction, string previous_hash, size_t block_index);
-    string get_hash(void){};
+    string generate_hash(void){};
     // ~Block();
 };
 
