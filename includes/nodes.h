@@ -2,7 +2,7 @@
 #define NODES_H
 #include <vector>
 #include <string>
-#include "../includes/blockchain.h"
+#include "blockchain.h"
 
 using namespace std;
 

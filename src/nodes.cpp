@@ -1,4 +1,4 @@
-#include "../includes/nodes.h"
+#include "nodes.h"
 
 Node::Node(){
     //Search for neighbours

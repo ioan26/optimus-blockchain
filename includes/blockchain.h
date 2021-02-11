@@ -1,7 +1,7 @@
 #ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
 #include <vector>
-#include "../includes/block.h"
+#include "block.h"
 
 using std::vector;
 
