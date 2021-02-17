@@ -22,16 +22,16 @@ string sha256(const string str)
     return ss.str();
 }
 
-int main(int argc, char const *argv[]) {
-  using namespace std::chrono;
+// int main(int argc, char const *argv[]) {
+//   using namespace std::chrono;
 
 
-  const auto p1 = std::chrono::system_clock::now();
-  const unsigned long int nano = std::chrono::duration_cast<std::chrono::nanoseconds>(p1.time_since_epoch()).count();
+//   const auto p1 = std::chrono::system_clock::now();
+//   const unsigned long int nano = std::chrono::duration_cast<std::chrono::nanoseconds>(p1.time_since_epoch()).count();
 
-  string perfect = to_string(nano);
+//   string perfect = to_string(nano);
 
-  cout << sha256(perfect) << endl;
+//   cout << sha256(perfect) << endl;
 
-  return 0;
-}
+//   return 0;
+// }
