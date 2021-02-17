@@ -5,16 +5,17 @@ package transaction;
 // The greeting service definition.
 service Transaction {
   // Obtains the feature at a given position.
-  rpc GetFeature(Point) returns (Feature) {}
+  rpc GetFeature(Message) returns (ACK) {}
 }
 
-// The request message containing the user's name.
-message Point {
-  int32 latitude = 1;
-  int32 longitude = 2;
+message Message {
+  string sender = 1;
+  string receiver = 2;
+  int32 amount = 3;
 }
 
 // Response to GetFeature
-message Feature {
-  string name = 1;
+message ACK {
+  string sender = 1;
+  string reciever = 2;
 }
